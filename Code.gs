@@ -1,5 +1,5 @@
 function createCopyOfDoc(sourceDocID) {
-  // Create a new document from the template, and return the new document's ID 
+  // Create a new document from the template, and return the new document's ID
   return DriveApp.getFileById(sourceDocID).makeCopy().getId();
 }
 
@@ -15,6 +15,12 @@ function parseAnimalData(animalData, spreadsheetHeaders) {
 }
 
 function insertDataIntoTemplate(template, data) {
+  Object.keys(data).forEach(function someName(field) {
+    template.replaceText(Utilities.formatString("{{%s}}", field), data[field])
+  });
+  // This doesn't actually matter - replaceText modifies the document in-place
+  // This will cause problems when we want to repeat the template multiple times
+  // but I'm not sure how to get a copy of the body as text while maintaining formatting
   return template;
 }
 
@@ -33,17 +39,19 @@ function generateSurgeryDoc() {
 
   newTemplateID = createCopyOfDoc(TEMPLATE_DOC_ID);
   resultFile = DriveApp.getFileById(newTemplateID);
-  docName = Utilities.formatString("APA Surgery Note %s", Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd"));
+
+  today = Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
+  docName = Utilities.formatString("APA Surgery Note %s", today);
   resultFile.setName(docName);
 
   allAnimalData = Sheets.Spreadsheets.Values.get(SPREADSHEET_DATA_ID, "A2:T");
 
-  templateBody = DocumentApp.openById(TEMPLATE_DOC_ID).getBody();
+  templateBody = DocumentApp.openById(newTemplateID).getBody();
   spreadsheetHeaders = Sheets.Spreadsheets.Values.get(SPREADSHEET_DATA_ID, "A1:1").values[0];
 
   for(var i=0; i<allAnimalData.values.length; i++) {
     structuredData = parseAnimalData(allAnimalData.values[i], spreadsheetHeaders);
     templatedData = insertDataIntoTemplate(templateBody, structuredData);
   }
+  templateBody.replaceText("{{Date}}", today);
 }
-
