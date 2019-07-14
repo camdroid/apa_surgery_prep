@@ -26,7 +26,7 @@ function insertDataIntoTemplate(template, data) {
 
 function log(data, debug) {
   if (debug == null) {
-    debug = false;
+    debug = true;
   }
   if (debug) {
     Logger.log(data);
