@@ -1,8 +1,3 @@
-function createCopyOfDoc(sourceDocID) {
-  // Create a new document from the template, and return the new document's ID
-  return DriveApp.getFileById(sourceDocID).makeCopy().getId();
-}
-
 function parseAnimalData(animalData, spreadsheetHeaders) {
   if (spreadsheetHeaders == null || animalData == null || spreadsheetHeaders.length !== animalData.length) {
     log("Header length doesn't match data length", true);
@@ -34,6 +29,30 @@ function today() {
   return Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
 }
 
+function moveFileToFolder(file_id, folder_id) {
+  folder = DriveApp.getFolderById(folder_id);
+  baseDocFile = DriveApp.getFileById(baseDocId);
+
+  folder.addFile(baseDocFile);
+  DriveApp.getRootFolder().removeFile(baseDocFile);
+}
+
+function createEndDocument(folder_id) {
+  docName = Utilities.formatString("APA Surgery Note %s", today());
+  baseDocId = DocumentApp.create(docName).getId();
+  moveFileToFolder(baseDocId, folder_id);
+
+  var baseDoc = DocumentApp.openById(baseDocId);
+  baseDoc.getBody().clear();
+  const sideMargin = 30;
+  var body = baseDoc.getActiveSection();
+  body.setMarginLeft(sideMargin);
+  body.setMarginRight(sideMargin);
+  body.setMarginTop(30);
+
+  return body;
+}
+
 function mergeFilesInFolder(folder_id) {
   log("Merging files");
   folder = DriveApp.getFolderById(folder_id);
@@ -48,18 +67,9 @@ function mergeFilesInFolder(folder_id) {
   //Shamelessly copied from
   // https://stackoverflow.com/questions/29032656/google-app-script-merge-multiple-documents-remove-all-line-breaks-and-sent-as
   // Create new aggregated doc
-  // TODO This creates a doc in the root directory, should really figure out how to fix that.
-  // When I try using folder.createFile, the resulting file is inaccessible to the rest of the code.
-  docName = Utilities.formatString("APA Surgery Note %s", today());
-  baseDocId = DocumentApp.create(docName).getId();
-  var baseDoc = DocumentApp.openById(baseDocId);
+
   // clear the whole document and start with empty page
-  baseDoc.getBody().clear();
-  var body = baseDoc.getActiveSection();
-  const sideMargin = 30;
-  body.setMarginLeft(sideMargin);
-  body.setMarginRight(sideMargin);
-  body.setMarginTop(30);
+  var body = createEndDocument(folder_id);
 
   for (var i = 0; i < docIDs.length; ++i ) {
     var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
