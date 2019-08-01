@@ -16,6 +16,7 @@ function parseAnimalData(animalData, spreadsheetHeaders) {
 
 function insertDataIntoTemplate(template, data) {
   Object.keys(data).forEach(function someName(field) {
+    log('Replacing ' + field + ' with ' + data[field]);
     template.replaceText(Utilities.formatString("{{%s}}", field), data[field])
   });
 }
@@ -49,7 +50,8 @@ function mergeFilesInFolder(folder_id) {
   // Create new aggregated doc
   // TODO This creates a doc in the root directory, should really figure out how to fix that.
   // When I try using folder.createFile, the resulting file is inaccessible to the rest of the code.
-  baseDocId = DocumentApp.create('result').getId();
+  docName = Utilities.formatString("APA Surgery Note %s", today());
+  baseDocId = DocumentApp.create(docName).getId();
   var baseDoc = DocumentApp.openById(baseDocId);
   // clear the whole document and start with empty page
   baseDoc.getBody().clear();
@@ -59,7 +61,7 @@ function mergeFilesInFolder(folder_id) {
   body.setMarginRight(sideMargin);
   body.setMarginTop(30);
 
-  for (var i = 1; i < docIDs.length; ++i ) {
+  for (var i = 0; i < docIDs.length; ++i ) {
     var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
     var totalElements = otherBody.getNumChildren();
     for( var j = 0; j < totalElements; ++j ) {
@@ -83,20 +85,18 @@ function generateSurgeryDoc() {
   TEMPLATE_DOC_ID = "11tKJlCMqgxm7yzJD8SvbmsQjOI8X2DHx2INjtAfU7uk";
   OUTPUT_FOLDER_ID = '15bnax8_qG8rjOV5uHqb8pGSl5u4lTp0s';
 
-//  docName = Utilities.formatString("APA Surgery Note %s", today());
-
   allAnimalData = Sheets.Spreadsheets.Values.get(SPREADSHEET_DATA_ID, "A2:T");
   spreadsheetHeaders = Sheets.Spreadsheets.Values.get(SPREADSHEET_DATA_ID, "A1:1").values[0];
 
   outputFolder = DriveApp.getFolderById(OUTPUT_FOLDER_ID);
 
   for(var i=0; i<allAnimalData.values.length; i++) {
+    structuredData = parseAnimalData(allAnimalData.values[i], spreadsheetHeaders);
+
     templateID = DriveApp.getFileById(TEMPLATE_DOC_ID).makeCopy('output'+i, outputFolder).getId();
     templateBody = DocumentApp.openById(templateID).getBody();
-    structuredData = parseAnimalData(allAnimalData.values[i], spreadsheetHeaders);
-    templatedData = insertDataIntoTemplate(templateBody, structuredData);
+    insertDataIntoTemplate(templateBody, structuredData);
     templateBody.replaceText("{{Date}}", today());
   }
-
   mergeFilesInFolder(OUTPUT_FOLDER_ID);
 }
