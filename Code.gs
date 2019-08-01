@@ -54,6 +54,10 @@ function mergeFilesInFolder(folder_id) {
   // clear the whole document and start with empty page
   baseDoc.getBody().clear();
   var body = baseDoc.getActiveSection();
+  const sideMargin = 30;
+  body.setMarginLeft(sideMargin);
+  body.setMarginRight(sideMargin);
+  body.setMarginTop(30);
 
   for (var i = 1; i < docIDs.length; ++i ) {
     var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
@@ -70,6 +74,7 @@ function mergeFilesInFolder(folder_id) {
       else
         throw new Error("Unknown element type: "+type);
     }
+    body.appendPageBreak();
   }
 }
 
