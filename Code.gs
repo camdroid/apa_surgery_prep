@@ -33,6 +33,46 @@ function today() {
   return Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
 }
 
+function mergeFilesInFolder(folder_id) {
+  log("Merging files");
+  folder = DriveApp.getFolderById(folder_id);
+  files = folder.getFiles();
+  docIDs = [];
+
+  while (files.hasNext()){
+    file = files.next();
+    docIDs.push(file.getId());
+  }
+
+  //Shamelessly copied from
+  // https://stackoverflow.com/questions/29032656/google-app-script-merge-multiple-documents-remove-all-line-breaks-and-sent-as
+  // Create new aggregated doc
+  // TODO This creates a doc in the root directory, should really figure out how to fix that.
+  // When I try using folder.createFile, the resulting file is inaccessible to the rest of the code.
+  baseDocId = DocumentApp.create('result').getId();
+  var baseDoc = DocumentApp.openById(baseDocId);
+  // clear the whole document and start with empty page
+  baseDoc.getBody().clear();
+  var body = baseDoc.getActiveSection();
+
+  for (var i = 1; i < docIDs.length; ++i ) {
+    var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
+    var totalElements = otherBody.getNumChildren();
+    for( var j = 0; j < totalElements; ++j ) {
+      var element = otherBody.getChild(j).copy();
+      var type = element.getType();
+      if( type == DocumentApp.ElementType.PARAGRAPH )
+        body.appendParagraph(element);
+      else if( type == DocumentApp.ElementType.TABLE )
+        body.appendTable(element);
+      else if( type == DocumentApp.ElementType.LIST_ITEM )
+        body.appendListItem(element);
+      else
+        throw new Error("Unknown element type: "+type);
+    }
+  }
+}
+
 function generateSurgeryDoc() {
   SPREADSHEET_DATA_ID = "1PYatshebqAXaRoiEfJqvj_0jIyWADJq7YxrrBfn1XzE";
   TEMPLATE_DOC_ID = "11tKJlCMqgxm7yzJD8SvbmsQjOI8X2DHx2INjtAfU7uk";
@@ -52,4 +92,6 @@ function generateSurgeryDoc() {
     templatedData = insertDataIntoTemplate(templateBody, structuredData);
     templateBody.replaceText("{{Date}}", today());
   }
+
+  mergeFilesInFolder(OUTPUT_FOLDER_ID);
 }
