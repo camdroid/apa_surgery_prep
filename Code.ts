@@ -13,7 +13,6 @@ function parseAnimalData(animalData, spreadsheetHeaders) {
 
 function insertDataIntoTemplate(template, data) {
   Object.keys(data).forEach(field => {
-    log('Replacing ' + field + ' with ' + data[field]);
     template.replaceText(Utilities.formatString("{{%s}}", field), data[field]);
   });
 }
@@ -49,6 +48,7 @@ function createEndDocument(folder_id): Body {
   body.setMarginLeft(margin);
   body.setMarginRight(margin);
   body.setMarginTop(margin);
+  body.setMarginBottom(margin);
 
   return body;
 }
