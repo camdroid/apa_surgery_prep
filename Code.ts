@@ -69,29 +69,22 @@ function mergeFilesInFolder(folder_id: number) {
   // clear the whole document and start with empty page
   var body = createEndDocument(folder_id);
 
+  // Have to separate these out first, otherwise the typescript compiler gets confused
+  const PARAGRAPH = DocumentApp.ElementType.PARAGRAPH;
+  const TABLE = DocumentApp.ElementType.TABLE;
+  const LIST_ITEM = DocumentApp.ElementType.LIST_ITEM;
+  const APPEND_METHODS = {
+    PARAGRAPH: 'appendParagraph',
+    TABLE: 'appendTable',
+    LIST_ITEM: 'appendListItem',
+  };
+
   for (var i = 0; i < docIDs.length; ++i ) {
     var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
     var totalElements = otherBody.getNumChildren();
     for( var j = 0; j < totalElements; ++j ) {
       var element = otherBody.getChild(j).copy();
-      var type = element.getType();
-      switch(type) {
-        case DocumentApp.ElementType.PARAGRAPH: {
-          body.appendParagraph(element)
-          break;
-        }
-        case DocumentApp.ElementType.TABLE: {
-          body.appendTable(element);
-          break;
-        }
-        case DocumentApp.ElementType.LIST_ITEM: {
-          body.appendListItem(element);
-          break;
-        }
-        default: {
-          throw new Error("Unknown element type: "+type);
-        }
-      }
+      (body[APPEND_METHODS[element.getType()])(element);
     }
     body.appendPageBreak();
   }
