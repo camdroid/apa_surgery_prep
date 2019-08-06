@@ -10,7 +10,7 @@ function parseAnimalData(animalData, spreadsheetHeaders) {
 }
 
 function insertDataIntoTemplate(template, data) {
-  Object.keys(data).forEach(function someName(field) {
+  Object.keys(data).forEach((field) => {
     log('Replacing ' + field + ' with ' + data[field]);
     template.replaceText(Utilities.formatString("{{%s}}", field), data[field]);
   });
