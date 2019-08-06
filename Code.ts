@@ -10,7 +10,7 @@ function parseAnimalData(animalData, spreadsheetHeaders) {
 }
 
 function insertDataIntoTemplate(template, data) {
-  Object.keys(data).forEach((field) => {
+  Object.keys(data).forEach(field => {
     log('Replacing ' + field + ' with ' + data[field]);
     template.replaceText(Utilities.formatString("{{%s}}", field), data[field]);
   });
@@ -25,11 +25,9 @@ function log(data, debug) {
   }
 }
 
-function today() {
-  return Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
-}
+const today = () => Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
 
-function moveFileToFolder(file_id, folder_id) {
+function moveFileToFolder(file_id, folder_id): null {
   folder = DriveApp.getFolderById(folder_id);
   baseDocFile = DriveApp.getFileById(baseDocId);
 
@@ -37,7 +35,7 @@ function moveFileToFolder(file_id, folder_id) {
   DriveApp.getRootFolder().removeFile(baseDocFile);
 }
 
-function createEndDocument(folder_id) {
+function createEndDocument(folder_id): Body {
   docName = Utilities.formatString("APA Surgery Note %s", today());
   baseDocId = DocumentApp.create(docName).getId();
   moveFileToFolder(baseDocId, folder_id);
@@ -53,7 +51,7 @@ function createEndDocument(folder_id) {
   return body;
 }
 
-function mergeFilesInFolder(folder_id) {
+function mergeFilesInFolder(folder_id: number) {
   log("Merging files");
   folder = DriveApp.getFolderById(folder_id);
   files = folder.getFiles();
@@ -77,14 +75,23 @@ function mergeFilesInFolder(folder_id) {
     for( var j = 0; j < totalElements; ++j ) {
       var element = otherBody.getChild(j).copy();
       var type = element.getType();
-      if( type == DocumentApp.ElementType.PARAGRAPH )
-        body.appendParagraph(element);
-      else if( type == DocumentApp.ElementType.TABLE )
-        body.appendTable(element);
-      else if( type == DocumentApp.ElementType.LIST_ITEM )
-        body.appendListItem(element);
-      else
-        throw new Error("Unknown element type: "+type);
+      switch(type) {
+        case DocumentApp.ElementType.PARAGRAPH: {
+          body.appendParagraph(element)
+          break;
+        }
+        case DocumentApp.ElementType.TABLE: {
+          body.appendTable(element);
+          break;
+        }
+        case DocumentApp.ElementType.LIST_ITEM: {
+          body.appendListItem(element);
+          break;
+        }
+        default: {
+          throw new Error("Unknown element type: "+type);
+        }
+      }
     }
     body.appendPageBreak();
   }
