@@ -44,11 +44,11 @@ function createEndDocument(folder_id) {
 
   var baseDoc = DocumentApp.openById(baseDocId);
   baseDoc.getBody().clear();
-  const sideMargin = 30;
+  const margin = 30;
   var body = baseDoc.getActiveSection();
-  body.setMarginLeft(sideMargin);
-  body.setMarginRight(sideMargin);
-  body.setMarginTop(30);
+  body.setMarginLeft(margin);
+  body.setMarginRight(margin);
+  body.setMarginTop(margin);
 
   return body;
 }
