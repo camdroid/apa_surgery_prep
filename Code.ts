@@ -79,8 +79,8 @@ function mergeFilesInFolder(folder_id: number) {
     LIST_ITEM: 'appendListItem',
   };
 
-  for (var i = 0; i < docIDs.length; ++i ) {
-    var otherBody = DocumentApp.openById(docIDs[i]).getActiveSection();
+  docIDs.forEach(docID => {
+    var otherBody = DocumentApp.openById(docID).getActiveSection();
     var totalElements = otherBody.getNumChildren();
     for( var j = 0; j < totalElements; ++j ) {
       var element = otherBody.getChild(j).copy();
