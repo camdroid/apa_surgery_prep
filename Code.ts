@@ -1,3 +1,5 @@
+import {BodyHelper} from "./BodyHelper";
+
 function parseAnimalData(animalData, spreadsheetHeaders) {
   if (spreadsheetHeaders == null || animalData == null || spreadsheetHeaders.length !== animalData.length) {
     log("Header length doesn't match data length", true);
@@ -69,22 +71,13 @@ function mergeFilesInFolder(folder_id: number) {
   // clear the whole document and start with empty page
   var body = createEndDocument(folder_id);
 
-  // Have to separate these out first, otherwise the typescript compiler gets confused
-  const PARAGRAPH = DocumentApp.ElementType.PARAGRAPH;
-  const TABLE = DocumentApp.ElementType.TABLE;
-  const LIST_ITEM = DocumentApp.ElementType.LIST_ITEM;
-  const APPEND_METHODS = {
-    PARAGRAPH: 'appendParagraph',
-    TABLE: 'appendTable',
-    LIST_ITEM: 'appendListItem',
-  };
+  const bodyHelper = new BodyHelper(body);
 
   docIDs.forEach(docID => {
-    var otherBody = DocumentApp.openById(docID).getActiveSection();
-    var totalElements = otherBody.getNumChildren();
-    for( var j = 0; j < totalElements; ++j ) {
+    var otherBody = DocumentApp.openById(docID).getActiveSection().copy();
+    for( var j = 0; j < otherBody.getNumChildren(); ++j ) {
       var element = otherBody.getChild(j).copy();
-      (body[APPEND_METHODS[element.getType()])(element);
+      bodyHelper.append(element);
     }
     body.appendPageBreak();
   }
