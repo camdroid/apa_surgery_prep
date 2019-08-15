@@ -84,6 +84,7 @@ function mergeFilesInFolder(folder_id: number) {
 }
 
 function generateSurgeryDoc() {
+  apalibrary.logHelloWorld();
   SPREADSHEET_DATA_ID = "1PYatshebqAXaRoiEfJqvj_0jIyWADJq7YxrrBfn1XzE";
   TEMPLATE_DOC_ID = "11tKJlCMqgxm7yzJD8SvbmsQjOI8X2DHx2INjtAfU7uk";
   OUTPUT_FOLDER_ID = '15bnax8_qG8rjOV5uHqb8pGSl5u4lTp0s';

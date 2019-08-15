@@ -13,6 +13,12 @@
       "userSymbol": "Sheets",
       "serviceId": "sheets",
       "version": "v4"
+    }, {
+      "libaries": [{
+        "userSymbol": "apalibrary",
+        "libraryId": "1H084Phs9MX-MMmT6Pfm4TeiNGoGHMLN7TI8o41SdZTmgc691pGAwQn-J",
+        "version": "1"
+       }]
     }]
   },
   "exceptionLogging": "STACKDRIVER"
