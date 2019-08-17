@@ -1,3 +1,5 @@
+// APA Surgery Prep
+
 import {BodyHelper} from "./BodyHelper";
 
 function parseAnimalData(animalData, spreadsheetHeaders) {
@@ -103,4 +105,8 @@ function generateSurgeryDoc() {
     templateBody.replaceText("{{Date}}", today());
   }
   mergeFilesInFolder(OUTPUT_FOLDER_ID);
+}
+
+function onOpen(e) {
+  var menu = apalibrary.addAPAMenu('Surgery Prep Menu');
 }
