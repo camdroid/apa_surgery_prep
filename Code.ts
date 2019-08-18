@@ -107,8 +107,18 @@ function generateSurgeryDoc() {
   mergeFilesInFolder(OUTPUT_FOLDER_ID);
 }
 
+function showUserLinkToFolder(folder_id) {
+  html = HtmlService.createHtmlOutput('<a href="https://www.google.com">Google</a>')
+      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  SpreadsheetApp.getUi().showModalDialog(html, 'My custom dialog');
+}
+
+function justShowLink() {
+  OUTPUT_FOLDER_ID = '15bnax8_qG8rjOV5uHqb8pGSl5u4lTp0s';
+  showUserLinkToFolder(OUTPUT_FOLDER_ID);
+}
 function onOpen(e) {
   var menu = SpreadsheetApp.getUi().createMenu('Surgery Prep');
-  menu.addItem('Generate Surgery Docs', 'generateSurgeryDoc');
+  menu.addItem('Generate Surgery Docs', 'justShowLink');
   menu.addToUi();
 }
