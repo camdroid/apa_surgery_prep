@@ -38,11 +38,7 @@ function moveFileToFolder(file_id, folder_id): null {
   DriveApp.getRootFolder().removeFile(baseDocFile);
 }
 
-function createEndDocument(folder_id): Body {
-  docName = Utilities.formatString("APA Surgery Note %s", today());
-  baseDocId = DocumentApp.create(docName).getId();
-  moveFileToFolder(baseDocId, folder_id);
-
+function initEndDocument(docId) {
   var baseDoc = DocumentApp.openById(baseDocId);
   baseDoc.getBody().clear();
   const margin = 30;
@@ -53,6 +49,13 @@ function createEndDocument(folder_id): Body {
   body.setMarginBottom(margin);
 
   return body;
+}
+
+function createEndDocument(folder_id): Body {
+  docName = Utilities.formatString("APA Surgery Note %s", today());
+  baseDocId = DocumentApp.create(docName).getId();
+  moveFileToFolder(baseDocId, folder_id);
+  return baseDocId;
 }
 
 function mergeFilesInFolder(folder_id: number) {
@@ -71,7 +74,8 @@ function mergeFilesInFolder(folder_id: number) {
   // Create new aggregated doc
 
   // clear the whole document and start with empty page
-  var body = createEndDocument(folder_id);
+  var finalDocId = createEndDocument(folder_id);
+  var body = initEndDocument(finalDocId);
 
   const bodyHelper = new BodyHelper(body);
 
@@ -83,6 +87,7 @@ function mergeFilesInFolder(folder_id: number) {
     }
     body.appendPageBreak();
   }
+  return finalDocId;
 }
 
 function generateSurgeryDoc() {
@@ -104,21 +109,19 @@ function generateSurgeryDoc() {
     insertDataIntoTemplate(templateBody, structuredData);
     templateBody.replaceText("{{Date}}", today());
   }
-  mergeFilesInFolder(OUTPUT_FOLDER_ID);
+  var finalDocId = mergeFilesInFolder(OUTPUT_FOLDER_ID);
+  showUserLinkToDocument(finalDocId);
 }
 
-function showUserLinkToFolder(folder_id) {
-  html = HtmlService.createHtmlOutput('<a href="https://www.google.com">Google</a>')
-      .setSandboxMode(HtmlService.SandboxMode.IFRAME);
-  SpreadsheetApp.getUi().showModalDialog(html, 'My custom dialog');
+function showUserLinkToDocument(docId) {
+  docUrl = 'https://docs.google.com/document/d/' + docId + '/edit';
+  html = HtmlService.createHtmlOutput('<a href="' + docUrl + '">Open Document Here</a>')
+    .setSandboxMode(HtmlService.SandboxMode.IFRAME);
+  SpreadsheetApp.getUi().showModalDialog(html, 'Right-click to open');
 }
 
-function justShowLink() {
-  OUTPUT_FOLDER_ID = '15bnax8_qG8rjOV5uHqb8pGSl5u4lTp0s';
-  showUserLinkToFolder(OUTPUT_FOLDER_ID);
-}
 function onOpen(e) {
   var menu = SpreadsheetApp.getUi().createMenu('Surgery Prep');
-  menu.addItem('Generate Surgery Docs', 'justShowLink');
+  menu.addItem('Generate Surgery Docs', 'generateSurgeryDoc');
   menu.addToUi();
 }
