@@ -108,5 +108,7 @@ function generateSurgeryDoc() {
 }
 
 function onOpen(e) {
-  var menu = apalibrary.addAPAMenu('Surgery Prep Menu');
+  var menu = SpreadsheetApp.getUi().createMenu('Surgery Prep');
+  menu.addItem('Generate Surgery Docs', 'generateSurgeryDoc');
+  menu.addToUi();
 }
