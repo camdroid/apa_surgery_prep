@@ -115,9 +115,9 @@ function generateSurgeryDoc() {
 
 function showUserLinkToDocument(docId) {
   docUrl = 'https://docs.google.com/document/d/' + docId + '/edit';
-  html = HtmlService.createHtmlOutput('<a href="' + docUrl + '">Open Document Here</a>')
+  html = HtmlService.createHtmlOutput('<a href="' + docUrl + '" target="_blank">Open Surgery Prep Doc Here</a>')
     .setSandboxMode(HtmlService.SandboxMode.IFRAME);
-  SpreadsheetApp.getUi().showModalDialog(html, 'Right-click to open');
+  SpreadsheetApp.getUi().showModalDialog(html, 'Document Ready');
 }
 
 function onOpen(e) {
