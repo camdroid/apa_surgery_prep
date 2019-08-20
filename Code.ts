@@ -2,29 +2,14 @@
 
 import {BodyHelper} from "./BodyHelper";
 
+// Not sure if there's a better way to import from a GAS library
+const util = apalibrary;
+const today = util.today;
+
 function insertDataIntoTemplate(template, data) {
   Object.keys(data).forEach(field => {
     template.replaceText(Utilities.formatString("{{%s}}", field), data[field]);
   });
-}
-
-function log(data, debug) {
-  if (debug == null) {
-    debug = true;
-  }
-  if (debug) {
-    Logger.log(data);
-  }
-}
-
-const today = () => Utilities.formatDate(new Date(), "CDT", "YYYY-MM-dd");
-
-function moveFileToFolder(file_id, folder_id): null {
-  folder = DriveApp.getFolderById(folder_id);
-  baseDocFile = DriveApp.getFileById(baseDocId);
-
-  folder.addFile(baseDocFile);
-  DriveApp.getRootFolder().removeFile(baseDocFile);
 }
 
 function initEndDocument(docId) {
@@ -43,12 +28,12 @@ function initEndDocument(docId) {
 function createEndDocument(folder_id): Body {
   docName = Utilities.formatString("APA Surgery Note %s", today());
   baseDocId = DocumentApp.create(docName).getId();
-  moveFileToFolder(baseDocId, folder_id);
+  util.moveFileToFolder(baseDocId, folder_id);
   return baseDocId;
 }
 
 function mergeFilesInFolder(folder_id: number) {
-  log("Merging files");
+  util.log("Merging files");
   folder = DriveApp.getFolderById(folder_id);
   files = folder.getFiles();
   docIDs = [];
