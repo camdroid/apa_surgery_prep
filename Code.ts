@@ -1,7 +1,5 @@
 // APA Surgery Prep - Sheet
 
-import {BodyHelper} from "./BodyHelper";
-
 // Not sure if there's a better way to import from a GAS library
 const util = apalibrary;
 const today = util.today;
@@ -47,7 +45,7 @@ function mergeFilesInFolder(folder_id: number) {
   var finalDocId = createEndDocument(folder_id);
   var body = initEndDocument(finalDocId);
 
-  const bodyHelper = new BodyHelper(body);
+  const bodyHelper = new apalibrary.BodyHelper(body);
 
   docIDs.forEach(docID => {
     var otherBody = DocumentApp.openById(docID).getActiveSection().copy();
