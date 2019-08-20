@@ -1,17 +1,6 @@
-// APA Surgery Prep
+// APA Surgery Prep - Sheet
 
 import {BodyHelper} from "./BodyHelper";
-
-function parseAnimalData(animalData, spreadsheetHeaders) {
-  if (spreadsheetHeaders == null || animalData == null || spreadsheetHeaders.length !== animalData.length) {
-    log("Header length doesn't match data length", true);
-  }
-  parsedAnimalData = {};
-  for (var i=0; i<spreadsheetHeaders.length; i++) {
-     parsedAnimalData[spreadsheetHeaders[i]] = animalData[i];
-  }
-  return parsedAnimalData;
-}
 
 function insertDataIntoTemplate(template, data) {
   Object.keys(data).forEach(field => {
@@ -102,7 +91,7 @@ function generateSurgeryDoc() {
   outputFolder = DriveApp.getFolderById(OUTPUT_FOLDER_ID);
 
   for(var i=0; i<allAnimalData.values.length; i++) {
-    structuredData = parseAnimalData(allAnimalData.values[i], spreadsheetHeaders);
+    structuredData = apalibrary.parseSpreadsheetData(allAnimalData.values[i], spreadsheetHeaders);
 
     templateID = DriveApp.getFileById(TEMPLATE_DOC_ID).makeCopy('output'+i, outputFolder).getId();
     templateBody = DocumentApp.openById(templateID).getBody();
