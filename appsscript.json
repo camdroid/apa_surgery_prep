@@ -17,7 +17,8 @@
     "libraries": [{
       "userSymbol": "apalibrary",
       "libraryId": "1H084Phs9MX-MMmT6Pfm4TeiNGoGHMLN7TI8o41SdZTmgc691pGAwQn-J",
-      "version": "1"
+      "version": "1",
+      "developmentMode": true
     }]
   },
   "exceptionLogging": "STACKDRIVER"
