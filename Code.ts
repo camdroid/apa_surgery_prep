@@ -15,12 +15,8 @@ function insertDataIntoTemplate(template, data) {
 function initEndDocument(docId) {
   var baseDoc = DocumentApp.openById(baseDocId);
   baseDoc.getBody().clear();
-  const margin = 30;
   var body = baseDoc.getActiveSection();
-  body.setMarginLeft(margin);
-  body.setMarginRight(margin);
-  body.setMarginTop(margin);
-  body.setMarginBottom(margin);
+  body = util.setBodyMargin(body, 30);
 
   return body;
 }
